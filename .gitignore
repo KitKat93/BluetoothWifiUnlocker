@@ -213,3 +213,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+gen/at/fhooe/mc/bluetootwifiunlocker/BuildConfig.java
+gen/at/fhooe/mc/bluetootwifiunlocker/R.java
+gen/com/actionbarsherlock/R.java
