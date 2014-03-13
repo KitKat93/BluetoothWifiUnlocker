@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BluetoothWifiUnlocker</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_wifi__networks">Wifi-Networks</string>
+    <string name="title_activity_bluetooth__devices">Bluetooth-Devices</string>
+    <string name="bluetooth_devices">Available Bluetooth-Devices:</string>
+    <string name="wifi_networks">Available Wifi-Networks:</string>
+    <string name="noti">Notification</string>
+    <string name="current_status">Current Status:</string>
+    <string name="lock_phone_now">Lock phone now</string>
+    <string name="timer_text">Please type in the time in which the device should be locked!</string>
+    <string name="start_countdown">Start Countdown</string>
+    <string name="seconds">sec</string>
+    <string name="by_wifi">by Wifi-Network: </string>
+    <string name="by_device">by Bluetooth-Device: </string>
+    <string name="lock_state_locked">Locked</string>
+    <string name="lock_state_unlocked">Unlocked</string>
+    <string name="noti_lockstate_unlocked">Device unlocked!</string>
+    <string name="noti_lockstate_locked">Device locked!</string>
+    <string name="help_deinstall">Uninstalling the application:</string>
+    <string name="help_deinstall_text">Before you are able to uninstall the BluetoothWifiUnlocker, you need to deactivate the admin which allows the application to lock your phone. \nTo do so, just click the button below. After having clicked the button the app can be uninstalled as usual.</string>
+    <string name="help_swipe">Handling:</string>
+    <string name="help_swipe_text">It is possible to switch between the tabs by clicking on them on the top of the screen or by a Left-to-Right or Right-To-Left gesture.\nAttention: These gestures just work on areas outside the listings and do not access the help-tab!</string>
+    <string name="help_howToUnlock">Unlocking the phone:</string>
+    <string name="help_howToUnlock_text">To define by which networks/bluetooth-devices your mobile phone should be unlocked, just select them by clicking on the appropriate list-item. The already selected networks/devices are shown permanently as long as they are selected - a network/bluetooth device can be deselected by clicking on the list item again.</string>
+    <string name="help">General Information: </string>
+    <string name="help_button">Deactivate Admin</string>
+    <string name="devAdmin_explanation">Please activate the admin-rights to allow the application to lock your phone!</string>
+
+</resources>
