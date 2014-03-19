@@ -1,3 +1,6 @@
+/**
+ * This class holds the configurations for the TabHost.
+ */
 package at.fhooe.mc.bluetoothwifiunlocker;
 
 import java.util.HashMap;
@@ -17,6 +20,9 @@ public class TabManager implements TabHost.OnTabChangeListener {
 	private final HashMap<String, TabInfo> mTabs = new HashMap<String, TabInfo>();
 	TabInfo mLastTab;
 
+	/**
+	 * Initializes the variables.
+	 */
 	static final class TabInfo {
 		private final String tag;
 		private final Class<?> clss;
@@ -30,6 +36,9 @@ public class TabManager implements TabHost.OnTabChangeListener {
 		}
 	}
 
+	/**
+	 * Inner class which generates the View for each Tab.
+	 */
 	static class DummyTabFactory implements TabHost.TabContentFactory {
 		private final Context mContext;
 
@@ -46,6 +55,16 @@ public class TabManager implements TabHost.OnTabChangeListener {
 		}
 	}
 
+	/**
+	 * Initializes the variables with the given values.
+	 * 
+	 * @param activity
+	 *            The Activity which holds the TabHost.
+	 * @param tabHost
+	 *            The given TabHost which holds the Tabs.
+	 * @param containerId
+	 *            The id for the tabcontent.
+	 */
 	public TabManager(FragmentActivity activity, TabHost tabHost,
 			int containerId) {
 		mActivity = activity;
@@ -54,6 +73,13 @@ public class TabManager implements TabHost.OnTabChangeListener {
 		mTabHost.setOnTabChangedListener(this);
 	}
 
+	/**
+	 * Generates a new Tab and adds it to the TabHost.
+	 * 
+	 * @param tabSpec The given TabSpecification
+	 * @param clss The class which contains the Tab
+	 * @param args Null as default.
+	 */
 	public void addTab(TabHost.TabSpec tabSpec, Class<?> clss, Bundle args) {
 		tabSpec.setContent(new DummyTabFactory(mActivity));
 		String tag = tabSpec.getTag();
@@ -76,6 +102,11 @@ public class TabManager implements TabHost.OnTabChangeListener {
 		mTabHost.addTab(tabSpec);
 	}
 
+	/**
+	 * Overrides the onTabChanged()-method from the OnTabChangedListener 
+	 * and is called each time the user clicks on a different Tab or swipes
+	 * to the left or right. Loads the new Tab.
+	 */
 	@Override
 	public void onTabChanged(String tabId) {
 		TabInfo newTab = mTabs.get(tabId);

@@ -28,5 +28,9 @@
     <string name="help">General Information: </string>
     <string name="help_button">Deactivate Admin</string>
     <string name="devAdmin_explanation">Please activate the admin-rights to allow the application to lock your phone!</string>
+    <string name="devAdmin_disable_warning">Do you really want to disable admin?</string>
+    <string name="timer_falseInput_title">Wrong Values!</string>
+    <string name="timer_falseInput">Please make sure you chose correct values (= max. 59) for the \'Minutes\' and \'Seconds\' from the countdown.</string>
+    <string name="devAdmin_deactivated">Admin successfully deactivated!</string>
 
 </resources>

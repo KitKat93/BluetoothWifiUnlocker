@@ -1,3 +1,7 @@
+/**
+ * This class holds all generally needed methods which are called 
+ * from several classes.
+ */
 package at.fhooe.mc.bluetoothwifiunlocker.utils;
 
 import java.io.IOException;
@@ -22,12 +26,23 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
-import at.fhooe.mc.bluetoothwifiunlocker.MainActivity;
 import at.fhooe.mc.bluetoothwifiunlocker.MyAdmin;
+import at.fhooe.mc.bluetoothwifiunlocker.tabfragments.MainActivity;
 import at.fhooe.mc.bluetootwifiunlocker.R;
 
 public class Utils {
 
+	/**
+	 * This method saves a given array in the SharedPreferences.
+	 * 
+	 * @param mContext
+	 *            The application context.
+	 * @param array
+	 *            The array which should be stored.
+	 * @param arrayName
+	 *            The name of the array which should be stored.
+	 * @return True if the array was saved successfully, false otherwise.
+	 */
 	public boolean saveArray(Context mContext, String[] array, String arrayName) {
 		SharedPreferences prefs = mContext.getSharedPreferences(arrayName, 0);
 		SharedPreferences.Editor editor = prefs.edit();
@@ -38,6 +53,15 @@ public class Utils {
 		return editor.commit();
 	}
 
+	/**
+	 * This method loads an array by its name from the SharedPreferences.
+	 * 
+	 * @param mContext
+	 *            The application context.
+	 * @param arrayName
+	 *            The name of the array which should be loaded.
+	 * @return The array which was loaded or null if this wasn't possible.
+	 */
 	public String[] loadArray(Context mContext, String arrayName) {
 		SharedPreferences prefs = mContext.getSharedPreferences(arrayName, 0);
 		int size = prefs.getInt(arrayName + "_size", 0);
@@ -48,6 +72,13 @@ public class Utils {
 		return arr;
 	}
 
+	/**
+	 * Converts a given ArrayList into a String-Array.
+	 * 
+	 * @param _arr
+	 *            The array which should be converted.
+	 * @return The new String-Array from the arraylist.
+	 */
 	public String[] convertToStringArray(ArrayList<String> _arr) {
 		String[] stringArr = new String[_arr.size()];
 		for (int i = 0; i < _arr.size(); i++) {
@@ -56,6 +87,13 @@ public class Utils {
 		return stringArr;
 	}
 
+	/**
+	 * Converts a given String-Array into an Arraylist.
+	 * 
+	 * @param _arr
+	 *            The String-Array which should be converted to an Arraylist.
+	 * @return The new Arraylist from the String-Array.
+	 */
 	public ArrayList<String> convertToArrayList(String[] _arr) {
 		ArrayList<String> stringArr = new ArrayList<String>();
 		for (int i = 0; i < _arr.length; i++) {
@@ -64,9 +102,15 @@ public class Utils {
 		return stringArr;
 	}
 
+	/**
+	 * This method enables the DeviceAdmin by opening the
+	 * Settings-->Security-->Device Manager Site for the user at which he can
+	 * activate the admin.
+	 * 
+	 * @param context
+	 *            The Application-context.
+	 */
 	public void enableAdmin(Context context) {
-
-		Log.i("Wifi Receiver", "EnableAdmin");
 
 		DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager) context
 				.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -94,11 +138,8 @@ public class Utils {
 				if (ai.packageName.equals(ri.activityInfo.packageName)
 						&& ai.name.equals(ri.activityInfo.name)) {
 					try {
-						// We didn't retrieve the meta data for all possible
-						// matches, so
-						// need to use the activity info of this specific one
-						// that was retrieved.
 						ri.activityInfo = ai;
+						@SuppressWarnings("unused")
 						DeviceAdminInfo dpi = new DeviceAdminInfo(context, ri);
 						found = true;
 					} catch (XmlPullParserException e) {
@@ -112,49 +153,69 @@ public class Utils {
 			if (!found) {
 				Log.w("MainActivity", "Request to add invalid device admin: "
 						+ mAdminName);
-
 				return;
 			}
 		}
 	}
 
+	/**
+	 * This method is called after every status-change (locked/unlocked) of the
+	 * application, generates the appropriate Notification and shows it.
+	 * 
+	 * @param running
+	 *            True if the device is currently unlocked, false otherwise.
+	 * @param context
+	 *            The current Application-context.
+	 * @param _callingClass
+	 *            The name of the class which called this method.
+	 */
 	@SuppressLint("NewApi")
 	public void showNotification(boolean running, Context context,
 			String _callingClass) {
 
 		Notification.Builder notification = new Notification.Builder(context);
-		notification.setContentTitle("BluetoothWifiUnlocker")
-				.setContentText(context.getString(R.string.noti_lockstate_locked))
+		notification
+				.setContentTitle("BluetoothWifiUnlocker")
+				.setContentText(
+						context.getString(R.string.noti_lockstate_locked))
 				.setSmallIcon(R.drawable.main_small);
 
 		if (_callingClass.equals("Wifi") && running) {
-			Log.i("Utils", "showNotification! - Wifi");
-
-			notification.setContentTitle("BluetoothWifiUnlocker")
-					.setContentText(context.getString(R.string.noti_lockstate_unlocked))
+			notification
+					.setContentTitle("BluetoothWifiUnlocker")
+					.setContentText(
+							context.getString(R.string.noti_lockstate_unlocked))
 					.setSmallIcon(R.drawable.wifi_small);
 		} else if (_callingClass.equals("Bluetooth") && running) {
-			Log.i("Utils", "showNotification! - Bluetooth");
-
-			notification.setContentTitle("BluetoothWifiUnlocker")
-					.setContentText(context.getString(R.string.noti_lockstate_unlocked))
+			notification
+					.setContentTitle("BluetoothWifiUnlocker")
+					.setContentText(
+							context.getString(R.string.noti_lockstate_unlocked))
 					.setSmallIcon(R.drawable.bt_small);
 
+		} else if (!_callingClass.equals("Bluetooth")
+				&& !_callingClass.equals("Wifi") && running) {
+			notification
+					.setContentTitle("BluetoothWifiUnlocker")
+					.setContentText(
+							context.getString(R.string.noti_lockstate_unlocked))
+					.setSmallIcon(R.drawable.noti_small);
 		} else {
-			notification.setContentTitle("BluetoothWifiUnlocker")
-					.setContentText(context.getString(R.string.noti_lockstate_locked))
+			notification
+					.setContentTitle("BluetoothWifiUnlocker")
+					.setContentText(
+							context.getString(R.string.noti_lockstate_locked))
 					.setSmallIcon(R.drawable.noti_small_grey);
-
 		}
 
 		Intent resultIntent = new Intent(context, MainActivity.class);
 
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0,
-				resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
+				0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		notification.setContentIntent(resultPendingIntent);
-		
-		NotificationManager mNotifyMgr = 
-		        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		NotificationManager mNotifyMgr = (NotificationManager) context
+				.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotifyMgr.notify(100, notification.build());
 	}
 }

@@ -20,7 +20,7 @@
     <string name="noti_lockstate_unlocked">Gerät entsperrt!</string>
     <string name="noti_lockstate_locked">Gerät gesperrt!</string>
     <string name="help_deinstall">Deinstallieren der Applikation:</string>
-	<string name="help_deinstall_text">Bevor es möglich ist, den BluetoothWifiUnlocker zu deinstallieren, bitte deaktivieren Sie die Administrator-Rechte, die es der App ermöglichen Ihr Gerät zu sperren. \nHierfür reicht ein Klick auf den Button darunter. Anschließend kann die App wie gewohnt deinstalliert werden.</string>   
+    <string name="help_deinstall_text">Bevor es möglich ist, den BluetoothWifiUnlocker zu deinstallieren, bitte deaktivieren Sie die Administrator-Rechte, die es der App ermöglichen Ihr Gerät zu sperren. \nHierfür reicht ein Klick auf den Button darunter. Anschließend kann die App wie gewohnt deinstalliert werden.</string>
     <string name="help_swipe">Bedienung:</string>
     <string name="help_swipe_text">Sie können zwischen den Registerkarten umschalten, in dem Sie entweder direkt auf die gewünschte Karte klicken oder Links-nach-Rechts bzw. Rechts-nach-Links Gesten verwenden.\nAchtung: Diese Gesten können nur erkannt werden, wenn sie außerhalb einer Liste angewendet werden und führen nicht in die Hilfe-Registerkarte!</string>
     <string name="help_howToUnlock">Entsperren des Geräts:</string>
@@ -28,5 +28,9 @@
     <string name="help">Allgemeine Informationen: </string>
     <string name="help_button">Administrator deaktivieren</string>
     <string name="devAdmin_explanation">Bitte aktivieren Sie die Administratorrechte um der App das Sperren des Handys zu ermöglichen!</string>
+    <string name="devAdmin_disable_warning">Wollen Sie wirklich die Administratorrechte deaktivieren?</string>
+    <string name="timer_falseInput_title">Falsche Eingabewerte!</string>
+    <string name="timer_falseInput">Bitte stellen Sie sicher, dass sie für die \'Minuten\' und \'Sekunden\' des Countdowns gültige Werte (= max. 59) eingeben.</string>
+    <string name="devAdmin_deactivated">Administrator erfolgreich deaktiviert!</string>
 
 </resources>

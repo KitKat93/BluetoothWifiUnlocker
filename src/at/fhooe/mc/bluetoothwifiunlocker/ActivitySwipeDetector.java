@@ -1,16 +1,13 @@
+/**
+ * This class manages the swipe-directions and actions according to them.
+ */
 package at.fhooe.mc.bluetoothwifiunlocker;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TabHost;
-import at.fhooe.mc.bluetoothwifiunlocker.utils.Utils;
-import at.fhooe.mc.bluetootwifiunlocker.R;
 
 public class ActivitySwipeDetector implements OnTouchListener {
 
@@ -19,22 +16,23 @@ public class ActivitySwipeDetector implements OnTouchListener {
 	static final int MAX_UP = 200;
 	private float downX, downY, upX, upY;
 	private TabHost tabs;
-	private Utils util;
-	private SherlockFragmentActivity context;
 
-	public ActivitySwipeDetector(SherlockFragmentActivity _context,
-			TabHost _tabs) {
-		Log.i(logTag, "SWIPE CONSTRUCTOR");
+	/**
+	 * Initializes the local variable tabs.
+	 * 
+	 * @param _tabs
+	 *            The given TabHost.
+	 */
+	public ActivitySwipeDetector(TabHost _tabs) {
 		tabs = _tabs;
-		context = _context;
-		util = new Utils();
 	}
 
+	/**
+	 * This method is called from the onTouch()-method and sets the tab to the
+	 * left one.
+	 */
 	public void onLeftToRightSwipe() {
-		Log.i(logTag, "LeftToRightSwipe!");
 		int pos = tabs.getCurrentTab();
-
-		Log.i(logTag, "Tab POSITION:" + pos);
 
 		if (pos >= 1) {
 			tabs.setCurrentTab(--pos);
@@ -44,12 +42,12 @@ public class ActivitySwipeDetector implements OnTouchListener {
 
 	}
 
+	/**
+	 * This method is called from the onTouch()-method and sets the tab to the
+	 * right one.
+	 */
 	public void onRightToLeftSwipe() {
-		Log.i(logTag, "onRightToLeftSwipe!");
-
 		int pos = tabs.getCurrentTab();
-
-		Log.i(logTag, "Tab POSITION:" + pos);
 
 		if (pos <= 2) {
 			tabs.setCurrentTab(++pos);
@@ -58,6 +56,12 @@ public class ActivitySwipeDetector implements OnTouchListener {
 		}
 	}
 
+	/**
+	 * This method catches the onTouch-Event from the OnTouchListener, checks at
+	 * which position the user touched and released the screen. According to
+	 * that, the swipe direction and length is computed and the
+	 * onLeftToRightSwipe()-method or onRightToLeftSwipe()-method is called.
+	 */
 	public boolean onTouch(View v, MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
@@ -72,7 +76,7 @@ public class ActivitySwipeDetector implements OnTouchListener {
 			float deltaX = downX - upX;
 			float deltaY = downY - upY;
 
-			// swipe horizontal?
+			// horizontal swipe
 			if (Math.abs(deltaX) > MIN_DISTANCE) {
 				// left or right
 				if (Math.abs(deltaY) > MAX_UP) {
@@ -94,7 +98,7 @@ public class ActivitySwipeDetector implements OnTouchListener {
 			} else {
 				Log.i(logTag, "Swipe was only " + Math.abs(deltaX)
 						+ " long, need at least " + MIN_DISTANCE);
-				return false; 
+				return false;
 			}
 
 			return true;
