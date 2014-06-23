@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="515dp"
-    android:background="@drawable/bg_2"
     android:orientation="vertical"
     tools:context=".MainScreen" >
 

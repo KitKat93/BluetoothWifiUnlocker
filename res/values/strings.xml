@@ -12,6 +12,7 @@
     <string name="lock_phone_now">Lock phone now</string>
     <string name="timer_text">Please type in the time in which the device should be locked!</string>
     <string name="start_countdown">Start Countdown</string>
+    <string name="stop_countdown">Stop Countdown</string>
     <string name="seconds">sec</string>
     <string name="by_wifi">by Wifi-Network: </string>
     <string name="by_device">by Bluetooth-Device: </string>

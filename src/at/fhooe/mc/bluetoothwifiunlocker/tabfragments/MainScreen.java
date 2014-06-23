@@ -8,6 +8,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -45,6 +46,22 @@ public class MainScreen extends SherlockFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		utils = new Utils();
+		
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(
+					DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+					compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i,5);
+		}
 
 		locked = (TextView) getActivity().findViewById(R.id.lockmode);
 		netw_dev = (TextView) getActivity().findViewById(R.id.netw_device);
@@ -60,12 +77,14 @@ public class MainScreen extends SherlockFragment implements
 
 		if (lockState.equals("unlocked")) {
 
-			if (network.equals("-1") && !device.equals("-1")) {
+			if (network.equals("not connected")) {
 				by.setText(R.string.by_device);
 				netw_dev.setText(device);
-			} else if (device.equals("-1") && !network.equals("-1")) {
+				utils.showNotification(true, getActivity(), "Bluetooth");
+			} else if (device.equals("not connected")) {
 				by.setText(R.string.by_wifi);
 				netw_dev.setText(network);
+				utils.showNotification(true, getActivity(), "Wifi");
 			}
 			netw_dev.setVisibility(View.VISIBLE);
 			lockNow.setVisibility(View.VISIBLE);
@@ -76,6 +95,8 @@ public class MainScreen extends SherlockFragment implements
 			lockNow.setVisibility(View.INVISIBLE);
 			lockNow.setChecked(false);
 			locked.setText(R.string.lock_state_locked);
+			
+			utils.showNotification(false, getActivity(), "MainScreen");
 		}
 	}
 
@@ -86,6 +107,23 @@ public class MainScreen extends SherlockFragment implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		
+		utils = new Utils();
+		
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(
+					DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+					compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i,5);
+		}
 
 		locked = (TextView) getActivity().findViewById(R.id.lockmode);
 		netw_dev = (TextView) getActivity().findViewById(R.id.netw_device);
@@ -99,10 +137,14 @@ public class MainScreen extends SherlockFragment implements
 		String device = settings.getString("device", "-1");
 
 		if (lockState.equals("unlocked")) {
-			if (network.equals("-1") && !device.equals("-1")) {
-				netw_dev.setText("Bluetooth- Device " + device);
-			} else if (device.equals("-1") && !network.equals("-1")) {
-				netw_dev.setText(R.string.by_wifi + network);
+			if (network.equals("-1")) {
+				by.setText(R.string.by_device);
+				netw_dev.setText(device);
+				utils.showNotification(true, getActivity(), "Bluetooth");
+			} else if (device.equals("-1")) {
+				by.setText(R.string.by_wifi);
+				netw_dev.setText(network);
+				utils.showNotification(true, getActivity(), "Wifi");
 			}
 			netw_dev.setVisibility(View.VISIBLE);
 			lockNow.setVisibility(View.VISIBLE);

@@ -84,19 +84,20 @@ public class MyListAdapter extends ArrayAdapter<String> {
 				} else {
 					b.setChecked(false);
 				}
+				b.setOnCheckedChangeListener(listener);
 			} else if (callingClass.equals("Bluetooth")) {
 				// bluetooth
 				ArrayList<String> savedDevices = utils.convertToArrayList(utils
 						.loadArray(context, "saved_bluetooth_devices"));
 
 				if (savedDevices.contains(element)) {
+					b.setChecked(true);
 				} else {
 					b.setChecked(false);
 				}
+				b.setOnCheckedChangeListener(listener);
 			}
-			b.setOnCheckedChangeListener(listener);
 		}
-
 		return _convertView;
 	}
 }

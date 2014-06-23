@@ -2,7 +2,6 @@
     android:id="@+id/linearLayout1"
     android:layout_width="fill_parent"
     android:layout_height="515dp"
-    android:background="@drawable/bg_2"
     android:orientation="vertical"
     android:padding="5dip" >
 

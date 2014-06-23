@@ -10,6 +10,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class TimerScreen extends SherlockFragment implements
 	private EditText seconds;
 	private Button startCountdown;
 	private Utils utils;
+	private CountDownTimer timer;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +47,19 @@ public class TimerScreen extends SherlockFragment implements
 	@Override
 	public void onStart() {
 		super.onStart();
+
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i, 5);
+		}
 
 		hours = (EditText) getActivity().findViewById(R.id.et_hours);
 		minutes = (EditText) getActivity().findViewById(R.id.et_minutes);
@@ -61,6 +76,19 @@ public class TimerScreen extends SherlockFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i, 5);
+		}
 
 		hours = (EditText) getActivity().findViewById(R.id.et_hours);
 		minutes = (EditText) getActivity().findViewById(R.id.et_minutes);
@@ -88,7 +116,9 @@ public class TimerScreen extends SherlockFragment implements
 	 */
 	public void startTimer(int _hours, int _minutes, int _seconds) {
 
-		new CountDownTimer((_seconds + _minutes * 60 + _hours * 3600) * 1000,
+		startCountdown.setText(R.string.stop_countdown);
+
+		timer = new CountDownTimer((_seconds + _minutes * 60 + _hours * 3600) * 1000,
 				1000) {
 
 			public void onTick(long millisUntilFinished) {
@@ -134,7 +164,8 @@ public class TimerScreen extends SherlockFragment implements
 					utils.showNotification(false, getActivity(), "Timer");
 				}
 			}
-		}.start();
+		};
+		timer.start();
 	}
 
 	/**
@@ -145,7 +176,8 @@ public class TimerScreen extends SherlockFragment implements
 	 */
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == startCountdown.getId()) {
+		if (v.getId() == startCountdown.getId()
+				&& startCountdown.getText().equals(R.string.start_countdown)) {
 
 			String h = "0";
 			String min = "0";
@@ -164,10 +196,10 @@ public class TimerScreen extends SherlockFragment implements
 			}
 
 			if (Integer.valueOf(s) >= 59 || Integer.valueOf(min) >= 59) {
-				AlertDialog falseInput = new AlertDialog.Builder(getActivity()).create();
+				AlertDialog falseInput = new AlertDialog.Builder(getActivity())
+						.create();
 				falseInput.setTitle(R.string.timer_falseInput_title);
-				falseInput
-						.setMessage(getString(R.string.timer_falseInput));
+				falseInput.setMessage(getString(R.string.timer_falseInput));
 				falseInput.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
@@ -180,6 +212,9 @@ public class TimerScreen extends SherlockFragment implements
 				startTimer(Integer.valueOf(h), Integer.valueOf(min),
 						Integer.valueOf(s));
 			}
+		} else if (v.getId() == startCountdown.getId()
+				&& startCountdown.getText().equals(R.string.stop_countdown)) {
+			timer.cancel();
 		}
 	}
 }

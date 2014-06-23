@@ -178,20 +178,20 @@ public class Utils {
 				.setContentTitle("BluetoothWifiUnlocker")
 				.setContentText(
 						context.getString(R.string.noti_lockstate_locked))
-				.setSmallIcon(R.drawable.main_small);
+				.setSmallIcon(R.drawable.main_small).setOngoing(true);
 
 		if (_callingClass.equals("Wifi") && running) {
 			notification
 					.setContentTitle("BluetoothWifiUnlocker")
 					.setContentText(
 							context.getString(R.string.noti_lockstate_unlocked))
-					.setSmallIcon(R.drawable.wifi_small);
+					.setSmallIcon(R.drawable.wifi_small).setOngoing(true);
 		} else if (_callingClass.equals("Bluetooth") && running) {
 			notification
 					.setContentTitle("BluetoothWifiUnlocker")
 					.setContentText(
 							context.getString(R.string.noti_lockstate_unlocked))
-					.setSmallIcon(R.drawable.bt_small);
+					.setSmallIcon(R.drawable.bt_small).setOngoing(true);
 
 		} else if (!_callingClass.equals("Bluetooth")
 				&& !_callingClass.equals("Wifi") && running) {
@@ -199,13 +199,13 @@ public class Utils {
 					.setContentTitle("BluetoothWifiUnlocker")
 					.setContentText(
 							context.getString(R.string.noti_lockstate_unlocked))
-					.setSmallIcon(R.drawable.noti_small);
+					.setSmallIcon(R.drawable.noti_small).setOngoing(true);
 		} else {
 			notification
 					.setContentTitle("BluetoothWifiUnlocker")
 					.setContentText(
 							context.getString(R.string.noti_lockstate_locked))
-					.setSmallIcon(R.drawable.noti_small_grey);
+					.setSmallIcon(R.drawable.noti_small_grey).setOngoing(true);
 		}
 
 		Intent resultIntent = new Intent(context, MainActivity.class);

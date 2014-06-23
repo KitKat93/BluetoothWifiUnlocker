@@ -1,3 +1,4 @@
+
 /**
  * This @class handles the BroadcastReceiver for the Wifi-Connections.
  */
@@ -19,8 +20,10 @@ import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 import at.fhooe.mc.bluetoothwifiunlocker.MyAdmin;
 import at.fhooe.mc.bluetoothwifiunlocker.utils.Utils;
+import at.fhooe.mc.bluetootwifiunlocker.R;
 
 public class WifiReceiver extends BroadcastReceiver {
 
@@ -78,11 +81,10 @@ public class WifiReceiver extends BroadcastReceiver {
 	 * status (=display unlocked) is saved in the SharedPreferences and the
 	 * currently showing notification gets updated. If the connection was lost,
 	 * it is checked whether the deviceadmin is active or not. If it is active,
-	 * the screen gets locked by the DevicePolicyManager and again, the
-	 * current status in the SharedPreferences and the Notification is updated.
-	 * If the admin isn't active, it gets activated by calling the method
-	 * enableAdmin() from the @class Utils and then the screen gets locked as
-	 * described above.
+	 * the screen gets locked by the DevicePolicyManager and again, the current
+	 * status in the SharedPreferences and the Notification is updated. If the
+	 * admin isn't active, it gets activated by calling the method enableAdmin()
+	 * from the @class Utils and then the screen gets locked as described above.
 	 * 
 	 * @param context
 	 */
@@ -102,7 +104,6 @@ public class WifiReceiver extends BroadcastReceiver {
 
 		if (myNetworkInfo.isConnected()) {
 
-
 			ArrayList<String> savedDevices = utils.convertToArrayList(utils
 					.loadArray(context, "saved_wifi_networks"));
 
@@ -117,12 +118,13 @@ public class WifiReceiver extends BroadcastReceiver {
 							.newKeyguardLock("MyKeyguardLock");
 					kl.disableKeyguard();
 
+					Log.i("WifiReceiver", "Keyguard disabled");
+
 					SharedPreferences settings = context.getSharedPreferences(
 							"BT_WIFI", 0);
 					Editor e = settings.edit();
 					e.putString("lockState", "unlocked");
 					e.putString("network", savedDevices.get(i));
-					e.remove("device");
 					e.commit();
 
 					utils.showNotification(true, context, "Wifi");
@@ -135,26 +137,49 @@ public class WifiReceiver extends BroadcastReceiver {
 			ComponentName compName = new ComponentName(context, MyAdmin.class);
 
 			boolean active = deviceManger.isAdminActive(compName);
-			if (active) {
-				deviceManger.lockNow();
-				SharedPreferences settings = context.getSharedPreferences(
-						"BT_WIFI", 0);
-				Editor e = settings.edit();
-				e.putString("lockState", "locked");
-				e.commit();
-				utils.showNotification(false, context, "Wifi");
-			} else {
-				utils.enableAdmin(context);
-				active = deviceManger.isAdminActive(compName);
+
+			// check if currently connected to bt or
+			SharedPreferences settings = context.getSharedPreferences(
+					"BT_WIFI", 0);
+
+			if (settings.getString("device", "-1").equals("not connected")) {
+
 				if (active) {
 					deviceManger.lockNow();
-
-					SharedPreferences settings = context.getSharedPreferences(
-							"BT_WIFI", 0);
+					Log.i("WifiReceiver", "Keyguard enabled");
 					Editor e = settings.edit();
 					e.putString("lockState", "locked");
+					e.putString("network", "not connected");
 					e.commit();
 					utils.showNotification(false, context, "Wifi");
+				} else {
+					ComponentName mAdminName = new ComponentName(context,
+							MyAdmin.class);
+
+					Intent i = new Intent(
+							DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+					i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+							mAdminName);
+					i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+							R.string.devAdmin_explanation);
+					context.startActivity(i);
+
+					try {
+						wait(1000 * 10);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					utils.enableAdmin(context);
+					active = deviceManger.isAdminActive(compName);
+					if (active) {
+						deviceManger.lockNow();
+						Log.i("WifiReceiver", "Keyguard enabled");
+						Editor e = settings.edit();
+						e.putString("lockState", "locked");
+						e.putString("network", "not connected");
+						e.commit();
+						utils.showNotification(false, context, "Wifi");
+					}
 				}
 			}
 		}

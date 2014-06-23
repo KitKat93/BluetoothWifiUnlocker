@@ -4,12 +4,17 @@
  */
 package at.fhooe.mc.bluetoothwifiunlocker.tabfragments;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
@@ -17,6 +22,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +52,19 @@ public class WIFI_Networks extends SherlockFragment implements
 			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i, 5);
+		}
+
 		utils = new Utils();
 
 		wifi = (WifiManager) getActivity().getSystemService(
@@ -66,6 +85,19 @@ public class WIFI_Networks extends SherlockFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i, 5);
+		}
+
 		if (!wifi.isWifiEnabled()) {
 			wifi.setWifiEnabled(true);
 		}
@@ -80,6 +112,19 @@ public class WIFI_Networks extends SherlockFragment implements
 	@Override
 	public void onStart() {
 		super.onStart();
+
+		ComponentName compName = new ComponentName(getActivity(), MyAdmin.class);
+		DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
+				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		boolean active = deviceManger.isAdminActive(compName);
+
+		if (!active) {
+			Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+			i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+					R.string.devAdmin_explanation);
+			getActivity().startActivityForResult(i, 5);
+		}
 		if (!wifi.isWifiEnabled()) {
 			wifi.setWifiEnabled(true);
 		}
@@ -139,6 +184,7 @@ public class WIFI_Networks extends SherlockFragment implements
 
 		if (isChecked) {
 			if (!savedDevices.contains(arg0.getText())) {
+				
 				savedDevices.add(arg0.getText().toString());
 				utils.saveArray(getActivity(),
 						utils.convertToStringArray(savedDevices),
@@ -167,27 +213,34 @@ public class WIFI_Networks extends SherlockFragment implements
 					final KeyguardManager.KeyguardLock kl = km
 							.newKeyguardLock("MyKeyguardLock");
 					kl.disableKeyguard();
+					
+					Log.i("Wifi Networks", "Keyguard disabled");
 
 					SharedPreferences settings = getActivity()
 							.getSharedPreferences("BT_WIFI", 0);
 					Editor e = settings.edit();
 					e.putString("lockState", "unlocked");
 					e.putString("network", arg0.getText().toString());
-					e.remove("device");
 					e.commit();
 
 					utils.showNotification(true, getActivity(), "Wifi");
 				}
 			}
-		} else {
+		} else { // was deselected
 			if (savedDevices.contains(arg0.getText().toString())) {
 
-				// check if currently connected
+				// check if currently connected to bt or 
 				SharedPreferences settings = getActivity()
 						.getSharedPreferences("BT_WIFI", 0);
+				
+				Log.i("Wifi Networks", "BT-Connected:" + settings.getString("device", "-1"));
+				
 				if (settings.getString("lockState", "-1").equals("unlocked")
 						&& settings.getString("network", "-1").equals(
-								arg0.getText().toString())) {
+								arg0.getText().toString())
+						&& settings.getString("device", "-1").equals(
+								"not connected")) {
+					
 					DevicePolicyManager deviceManger = (DevicePolicyManager) getActivity()
 							.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
@@ -198,9 +251,14 @@ public class WIFI_Networks extends SherlockFragment implements
 
 					if (active) {
 						deviceManger.lockNow();
+						
+						Log.i("Wifi Networks", "Keyguard enabled");
+						
 						utils.showNotification(false, getActivity(), "Wifi");
 						Editor e = settings.edit();
 						e.putString("lockState", "locked");
+						e.putString("network", "not connected");
+						e.putString("device", "not connected");
 						e.commit();
 					}
 				}
